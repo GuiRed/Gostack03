@@ -6,14 +6,10 @@ import "./styles.css";
 function App() {
   const [repositories, setRepositories] = useState([]);
 
-  const getRepositories = () => {
+  useEffect(() => {
     api.get('repositories').then(response => {
       setRepositories(response.data);
     });
-  };
-
-  useEffect(() => {
-    getRepositories();
   }, []);
 
   async function handleAddRepository() {
@@ -30,7 +26,9 @@ function App() {
   async function handleRemoveRepository(id) {
     await api.delete(`/repositories/${id}`)
       .then(() => {
-        getRepositories();
+        const repositoryIndex = (repositories.findIndex(resp => resp.id === id));
+        repositories.splice(repositoryIndex,1);
+        setRepositories([...repositories]);
       })
   }
 
